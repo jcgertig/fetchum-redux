@@ -1,6 +1,6 @@
 {
   "name": "fetchum-redux",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Redux actions for fetchum",
   "browser": "dist/fetchum-redux.js",
   "main": "lib/index.js",

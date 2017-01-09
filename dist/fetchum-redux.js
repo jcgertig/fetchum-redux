@@ -103,10 +103,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return new Promise(function (accept, reject) {
 	        dispatch({ payload: options, type: 'NEW_FETCH_REQUEST' });
 	        (0, _fetchum.generateRequest)(options)(params, body, headers, customToken, tokenType).then(function (res) {
-	          dispatch({ payload: (0, _lodash2['default'])({}, options, res), type: 'FETCH_REQUEST_SUCCESS' });
+	          dispatch({ payload: (0, _lodash2['default'])({}, options, { res: res }), type: 'FETCH_REQUEST_SUCCESS' });
 	          accept(res);
 	        })['catch'](function (res) {
-	          dispatch({ payload: (0, _lodash2['default'])({}, options, res), type: 'FETCH_REQUEST_FAILURE' });
+	          dispatch({ payload: (0, _lodash2['default'])({}, options, { res: res }), type: 'FETCH_REQUEST_FAILURE' });
 	          reject(res);
 	        });
 	      });

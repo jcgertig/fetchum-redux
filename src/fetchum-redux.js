@@ -18,11 +18,11 @@ export const generateRequest = (options) => {
         dispatch({ payload: options, type: 'NEW_FETCH_REQUEST' })
         genFetchum(options)(params, body, headers, customToken, tokenType)
           .then(res => {
-            dispatch({ payload: assign({}, options, res), type: 'FETCH_REQUEST_SUCCESS' })
+            dispatch({ payload: assign({}, options, { res }), type: 'FETCH_REQUEST_SUCCESS' })
             accept(res)
           })
           .catch(res => {
-            dispatch({ payload: assign({}, options, res), type: 'FETCH_REQUEST_FAILURE' })
+            dispatch({ payload: assign({}, options, { res }), type: 'FETCH_REQUEST_FAILURE' })
             reject(res)
           })
       })
