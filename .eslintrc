@@ -1,0 +1,15 @@
+{
+  "extends": "eslint-config-rackt",
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "expect": true
+  },
+  "rules": {
+    "no-console": 0,
+    "padded-blocks": 0,
+    "no-use-before-define": [2, "nofunc"],
+    "no-unused-expressions": 0
+  }
+}
