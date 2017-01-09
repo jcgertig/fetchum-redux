@@ -2,7 +2,7 @@
   "name": "fetchum-redux",
   "version": "1.0.0",
   "description": "A redux actions for fetchum",
-  "browser": "dist/fetchum.js",
+  "browser": "dist/fetchum-redux.js",
   "main": "lib/index.js",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
@@ -17,17 +17,18 @@
     "lint": "eslint src test",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
-    "build:umd": "cross-env BABEL_ENV=commonjs NODE_ENV=development webpack src/index.js dist/fetchum.js",
-    "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack src/index.js dist/fetchum.min.js",
+    "build:umd": "cross-env BABEL_ENV=commonjs NODE_ENV=development webpack src/index.js dist/fetchum-redux.js",
+    "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack src/index.js dist/fetchum-redux.min.js",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jcgertig/fetchum.git"
+    "url": "https://github.com/jcgertig/fetchum-redux.git"
   },
-  "homepage": "https://github.com/jcgertig/fetchum",
+  "homepage": "https://github.com/jcgertig/fetchum-redux",
   "keywords": [
     "fetch",
+    "redux",
     "api",
     "es6",
     "promise",
@@ -75,11 +76,9 @@
     "rimraf": "^2.3.4",
     "webpack": "^1.9.6"
   },
-  "peerDependencies": {
-    "fetchum": "^3.1.0"
-  },
   "dependencies": {
     "es6-promise": "^4.0.5",
-    "lodash.assign": "^4.17.2"
+    "fetchum": "^3.1.0",
+    "lodash.assign": "^4.2.0"
   }
 }
