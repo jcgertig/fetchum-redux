@@ -54,7 +54,13 @@ const getRandomUser = () => {
 
 ### Api - `generateCRUDRequests`
 
-Return exactly like `generateCRUDRequests` from Fetchum but uses fetchum-redux `generateRequest`.
+Return exactly like `generateCRUDRequests` from Fetchum but uses fetchum-redux `generateRequest` and passes a modify type param.
+
+- `fetchAll` adds `FETCH_ALL` to the type eg: `'NEW_FETCH_ALL_FETCH_REQUEST'` `'FETCH_ALL_FETCH_REQUEST_SUCCESS'`
+- `fetchOne` adds `FETCH_ONE`
+- `create` adds `CREATE`
+- `update` adds `UPDATE`
+- `delete` adds `DELETE`
 
 ### Api - basic Calls
 
@@ -75,3 +81,15 @@ const getUsersDirectWithThunk = () => {
     .catch((res, err) => { console.warn(res); });
 };
 ```
+
+## Modifying action types
+
+Each method also takes an extra parameter at the end to use to modify the action type names.
+The name parameter replaces the word `'FETCH'` in the action type like so:
+
+`generateRequest` looks like `generateRequest({}, 'TEST')` and the action types will be:
+First `'NEW_TEST_REQUEST'` then `'TEST_REQUEST_SUCCESS'` if successful and `'TEST_REQUEST_FAILURE'` if not.
+
+`generateCRUDRequests` keeps its individual additions noted above but still overrides the word `'FETCH'`.
+For example `generateCRUDRequests('/users', 'id', true, 'USERS')` for a `fetchOne` would trigger
+first `'NEW_FETCH_ONE_USERS_REQUEST'` then `'FETCH_ONE_USERS_REQUEST_SUCCESS'` if successful and `'FETCH_ONE_USERS_REQUEST_FAILURE'` if not.
