@@ -21,12 +21,12 @@ export var generateRequest = function generateRequest(options) {
   return function (params, body, headers, customToken, tokenType) {
     return function (dispatch) {
       return new Promise(function (accept, reject) {
-        dispatch({ payload: options, type: defaultNewRequest.replace('_FETCH', '_' + name.toUpperCase()) });
+        dispatch({ payload: assign({}, options, { params: params, body: body, customHeaders: headers, customToken: customToken, tokenType: tokenType }), type: defaultNewRequest.replace('_FETCH', '_' + name.toUpperCase()) });
         genFetchum(options)(params, body, headers, customToken, tokenType).then(function (res) {
-          dispatch({ payload: assign({}, options, { res: res }), type: defaultSuccessRequest.replace('FETCH_', name.toUpperCase() + '_') });
+          dispatch({ payload: assign({}, options, { res: res, params: params, body: body, customHeaders: headers, customToken: customToken, tokenType: tokenType }), type: defaultSuccessRequest.replace('FETCH_', name.toUpperCase() + '_') });
           accept(res);
         })['catch'](function (res) {
-          dispatch({ payload: assign({}, options, { res: res }), type: defaultFailureRequest.replace('FETCH_', name.toUpperCase() + '_') });
+          dispatch({ payload: assign({}, options, { res: res, params: params, body: body, customHeaders: headers, customToken: customToken, tokenType: tokenType }), type: defaultFailureRequest.replace('FETCH_', name.toUpperCase() + '_') });
           reject(res);
         });
       });

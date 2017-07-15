@@ -107,12 +107,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return function (params, body, headers, customToken, tokenType) {
 	    return function (dispatch) {
 	      return new Promise(function (accept, reject) {
-	        dispatch({ payload: options, type: defaultNewRequest.replace('_FETCH', '_' + name.toUpperCase()) });
+	        dispatch({ payload: (0, _lodash2['default'])({}, options, { params: params, body: body, customHeaders: headers, customToken: customToken, tokenType: tokenType }), type: defaultNewRequest.replace('_FETCH', '_' + name.toUpperCase()) });
 	        (0, _fetchum.generateRequest)(options)(params, body, headers, customToken, tokenType).then(function (res) {
-	          dispatch({ payload: (0, _lodash2['default'])({}, options, { res: res }), type: defaultSuccessRequest.replace('FETCH_', name.toUpperCase() + '_') });
+	          dispatch({ payload: (0, _lodash2['default'])({}, options, { res: res, params: params, body: body, customHeaders: headers, customToken: customToken, tokenType: tokenType }), type: defaultSuccessRequest.replace('FETCH_', name.toUpperCase() + '_') });
 	          accept(res);
 	        })['catch'](function (res) {
-	          dispatch({ payload: (0, _lodash2['default'])({}, options, { res: res }), type: defaultFailureRequest.replace('FETCH_', name.toUpperCase() + '_') });
+	          dispatch({ payload: (0, _lodash2['default'])({}, options, { res: res, params: params, body: body, customHeaders: headers, customToken: customToken, tokenType: tokenType }), type: defaultFailureRequest.replace('FETCH_', name.toUpperCase() + '_') });
 	          reject(res);
 	        });
 	      });
@@ -5422,7 +5422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
 		exports.__esModule = true;
-		exports.isSet = exports.addHydratedState = exports.setHydratedState = exports.getHydratedState = exports.removeToken = exports.setToken = exports.getToken = exports.remove = exports.set = exports.get = exports.getPrefix = undefined;
+		exports.hasToken = exports.isSet = exports.addHydratedState = exports.setHydratedState = exports.getHydratedState = exports.removeToken = exports.setToken = exports.getToken = exports.remove = exports.set = exports.get = exports.getPrefix = undefined;
 
 		var _lodash = __webpack_require__(13);
 
@@ -5550,6 +5550,15 @@ return /******/ (function(modules) { // webpackBootstrap
 		 */
 		var isSet = exports.isSet = function isSet(id) {
 		  return get(id) !== null;
+		};
+
+		/**
+		 * Checks if has token
+		 * @param  {Any} value
+		 *
+		 */
+		var hasToken = exports.hasToken = function hasToken() {
+		  return isSet('token');
 		};
 		/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
@@ -24595,7 +24604,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		  return new Promise(function (resolve, reject) {
 		    fetch(reqst).then(function (response) {
-		      if (response.ok) {
+		      try {
 		        response.text().then(function (data) {
 		          var json = null;
 		          try {
@@ -24604,15 +24613,33 @@ return /******/ (function(modules) { // webpackBootstrap
 		            // test parsing json
 		          }
 		          response.data = json !== null ? json : data;
-		          return resolve(response);
+		          if (response.ok) {
+		            return resolve(response);
+		          }
+		          reject(response);
 		        })['catch'](function () {
-		          return reject(response);
+		          response.data = null;return reject(response);
 		        });
-		      } else {
-		        reject(response);
+		      } catch (e) {
+		        reject(response, e);
 		      }
 		    })['catch'](function (response) {
-		      return reject(response);
+		      try {
+		        response.text().then(function (data) {
+		          var json = null;
+		          try {
+		            json = JSON.parse(data);
+		          } catch (e) {
+		            // test parsing json
+		          }
+		          response.data = json !== null ? json : data;
+		          return reject(response);
+		        })['catch'](function () {
+		          response.data = null;return reject(response);
+		        });
+		      } catch (e) {
+		        reject(response, e);
+		      }
 		    });
 		  });
 		}
@@ -24729,9 +24756,6 @@ return /******/ (function(modules) { // webpackBootstrap
 		  clone.form = clone.form || false;
 		  clone.external = clone.external || false;
 		  clone.headers = clone.headers || {};
-		  if (clone.external) {
-		    return _publicRequest.bind(undefined, clone);
-		  }
 
 		  return clone.token ? _requestWithToken.bind(undefined, clone) : _publicRequest.bind(undefined, clone);
 		};

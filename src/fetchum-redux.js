@@ -19,14 +19,14 @@ export const generateRequest = (options, name = 'FETCH') => {
   return (params, body, headers, customToken, tokenType) => {
     return (dispatch) => {
       return new Promise((accept, reject) => {
-        dispatch({ payload: options, type: defaultNewRequest.replace('_FETCH', `_${name.toUpperCase()}`) })
+        dispatch({ payload: assign({}, options, { params, body, customHeaders: headers, customToken, tokenType }), type: defaultNewRequest.replace('_FETCH', `_${name.toUpperCase()}`) })
         genFetchum(options)(params, body, headers, customToken, tokenType)
           .then(res => {
-            dispatch({ payload: assign({}, options, { res }), type: defaultSuccessRequest.replace('FETCH_', `${name.toUpperCase()}_`) })
+            dispatch({ payload: assign({}, options, { res, params, body, customHeaders: headers, customToken, tokenType }), type: defaultSuccessRequest.replace('FETCH_', `${name.toUpperCase()}_`) })
             accept(res)
           })
           .catch(res => {
-            dispatch({ payload: assign({}, options, { res }), type: defaultFailureRequest.replace('FETCH_', `${name.toUpperCase()}_`) })
+            dispatch({ payload: assign({}, options, { res, params, body, customHeaders: headers, customToken, tokenType }), type: defaultFailureRequest.replace('FETCH_', `${name.toUpperCase()}_`) })
             reject(res)
           })
       })
