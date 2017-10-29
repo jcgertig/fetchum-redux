@@ -1,7 +1,12 @@
 # Fetchum Redux
  Redux Actions for [Fetchum](https://www.npmjs.com/package/fetchum)
 
- [![npm version](https://badge.fury.io/js/fetchum-redux.svg)](https://badge.fury.io/js/fetchum-redux)
+[![Downloads][npm-dm]][package-url]
+[![Downloads][npm-dt]][package-url]
+[![NPM Version][npm-v]][package-url]
+[![Dependencies][deps]][package-url]
+[![Dev Dependencies][dev-deps]][package-url]
+[![License][license]][package-url]
 
 ## Install
 
@@ -93,3 +98,12 @@ First `'NEW_TEST_REQUEST'` then `'TEST_REQUEST_SUCCESS'` if successful and `'TES
 `generateCRUDRequests` keeps its individual additions noted above but still overrides the word `'FETCH'`.
 For example `generateCRUDRequests('/users', 'id', true, 'USERS')` for a `fetchOne` would trigger
 first `'NEW_FETCH_ONE_USERS_REQUEST'` then `'FETCH_ONE_USERS_REQUEST_SUCCESS'` if successful and `'FETCH_ONE_USERS_REQUEST_FAILURE'` if not.
+
+
+[npm-dm]: https://img.shields.io/npm/dm/fetchum-redux.svg
+[npm-dt]: https://img.shields.io/npm/dt/fetchum-redux.svg
+[npm-v]: https://img.shields.io/npm/v/fetchum-redux.svg
+[deps]: https://img.shields.io/david/jcgertig/fetchum-redux.svg
+[dev-deps]: https://img.shields.io/david/dev/jcgertig/fetchum-redux.svg
+[license]: https://img.shields.io/npm/l/fetchum-redux.svg
+[package-url]: https://npmjs.com/package/fetchum-redux
