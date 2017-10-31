@@ -1383,9 +1383,9 @@ fbjs@^0.8.16, fbjs@^0.8.9:
     setimmediate "^1.0.5"
     ua-parser-js "^0.7.9"
 
-fetchum@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/fetchum/-/fetchum-4.0.1.tgz#c58810d3dcdcd0da556569dab24e8ec0c0d6b2a4"
+fetchum@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/fetchum/-/fetchum-4.1.0.tgz#4da651863d7c33f82342b2285fd3d2456446a210"
   dependencies:
     betterstorage "^1.0.0"
     core-decorators "^0.20.0"

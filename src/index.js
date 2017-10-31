@@ -1,5 +1,10 @@
-import { generateRequest as genFetchum, request as reqFetchum, apiRequest as apiFetchum } from 'fetchum';
+import {
+  generateRequest as genFetchum,
+  request as reqFetchum,
+  apiRequest as apiFetchum,
+} from 'fetchum';
 import assign from 'lodash.assign';
+
 
 /**
  * Fetchum Redux - Redux action wrapper for fetchum
@@ -22,7 +27,7 @@ const getActionType = (type, name, before = false) => type.replace(`${before ? '
  * @param  {Object} options - {method, token, route, external, form, headers}
  *
  */
-const generateRequest = (options, name = 'FETCH') => (params, body, headers, customToken, tokenType) => dispatch => new Promise((accept, reject) => {
+export const generateRequest = (options, name = 'FETCH') => (params, body, headers, customToken, tokenType) => dispatch => new Promise((accept, reject) => {
   dispatch({
     payload: assign({}, options, { params, body, customHeaders: headers, customToken, tokenType }),
     type: getActionType(defaultNewRequest, name, true),
@@ -59,7 +64,7 @@ const generateRequest = (options, name = 'FETCH') => (params, body, headers, cus
  * @param  {Object} useToken
  *
  */
-const generateCRUDRequests = (baseUrl = '', idVar = 'id', token = false, name = 'FETCH') => (
+export const generateCRUDRequests = (baseUrl = '', idVar = 'id', token = false, name = 'FETCH') => (
   {
     fetchAll: generateRequest({
       token,
@@ -89,7 +94,7 @@ const generateCRUDRequests = (baseUrl = '', idVar = 'id', token = false, name = 
   }
 );
 
-const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, name = 'FETCH', storeName = 'fetch') => (
+export const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, name = 'FETCH', storeName = 'fetch') => (
   {
     getPage: (page, params, body, headers, customToken, tokenType) => (dispatch) => {
       let nextPage = page;
@@ -135,7 +140,7 @@ const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, name = 'F
   }
 );
 
-const generateCRUDReducer = ({
+export const generateCRUDReducer = ({
   name = 'fetch',
   defaultState = {},
   modifyPayload = i => i,
@@ -243,7 +248,7 @@ const generateCRUDReducer = ({
 };
 
 
-const request = (isFormData, method, url, body, headers, others, name = 'FETCH') => dispatch => new Promise((accept, reject) => {
+export const request = (isFormData, method, url, body, headers, others, name = 'FETCH') => dispatch => new Promise((accept, reject) => {
   dispatch({
     payload: { isFormData, method, url, body, headers, others },
     type: getActionType(defaultNewRequest, name, true),
@@ -265,7 +270,7 @@ const request = (isFormData, method, url, body, headers, others, name = 'FETCH')
   });
 });
 
-const apiRequest = (isFormData, method, route, body, headers, others, name = 'FETCH') => dispatch => new Promise((accept, reject) => {
+export const apiRequest = (isFormData, method, route, body, headers, others, name = 'FETCH') => dispatch => new Promise((accept, reject) => {
   dispatch({
     payload: { isFormData, method, route, body, headers, others },
     type: getActionType(defaultNewRequest, name, true),
@@ -287,24 +292,13 @@ const apiRequest = (isFormData, method, route, body, headers, others, name = 'FE
   });
 });
 
-const methods = {
-  generateRequest,
-  generateCRUDRequests,
-  generatePagedCalls,
-  generateCRUDReducer,
-  request,
-  apiRequest,
-};
+const buildReqs = reqMethod => ['get', 'put', 'post', 'patch', 'delete', 'postForm', 'putForm'].reduce(
+    (methods, method) => {
+      methods[method] = reqMethod.bind(null, method.indexOf('Form') > -1, method); // eslint-disable-line
+      return methods;
+    },
+    {},
+  );
 
-const buildReqs = (reqMethod, mid = '', form = false) => {
-  ['get', 'put', 'post', 'patch', 'delete'].forEach((method) => {
-    methods[`${method}${mid}Request`] = reqMethod.bind(null, form, method);
-  });
-};
-
-buildReqs(request);
-buildReqs(request, 'Form', true);
-buildReqs(apiRequest, 'Api');
-buildReqs(apiRequest, 'ApiForm', true);
-
-export default methods;
+export const requests = buildReqs(request);
+export const apiRequests = buildReqs(apiRequest);

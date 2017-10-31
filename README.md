@@ -72,16 +72,16 @@ Return exactly like `generateCRUDRequests` from Fetchum but uses fetchum-redux `
 All of fetchum's basic calls work as well like so:
 
 ```javascript
-import { apiGet } from 'fetchum-redux';
+import { apiRequests } from 'fetchum-redux';
 
 const getUsersDirect = () => {
-  apiGet('/v1/users')(dispatch)
+  apiRequests.get('/v1/users')(dispatch)
     .then((res) => { console.log('my users', res.data); })
     .catch((res, err) => { console.warn(res); });
 };
 
 const getUsersDirectWithThunk = () => {
-  dispatch(apiGet('/v1/users'))
+  dispatch(apiRequests.get('/v1/users'))
     .then((res) => { console.log('my users', res.data); })
     .catch((res, err) => { console.warn(res); });
 };

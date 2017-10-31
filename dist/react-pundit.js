@@ -17,6 +17,8 @@
     value: true
   });
 
+  var _fetchum2 = _interopRequireDefault(_fetchum);
+
   var _lodash2 = _interopRequireDefault(_lodash);
 
   function _interopRequireDefault(obj) {
@@ -38,6 +40,11 @@
 
     return target;
   };
+
+  var genFetchum = _fetchum2.default.generateRequest,
+      reqFetchum = _fetchum2.default.request,
+      apiFetchum = _fetchum2.default.apiRequest;
+
 
   /**
    * Fetchum Redux - Redux action wrapper for fetchum
@@ -72,7 +79,7 @@
             payload: (0, _lodash2.default)({}, options, { params: params, body: body, customHeaders: headers, customToken: customToken, tokenType: tokenType }),
             type: getActionType(defaultNewRequest, name, true)
           });
-          (0, _fetchum.generateRequest)(options)(params, body, headers, customToken, tokenType).then(function (res) {
+          genFetchum(options)(params, body, headers, customToken, tokenType).then(function (res) {
             dispatch({
               payload: (0, _lodash2.default)({}, options, { res: res, params: params, body: body, customHeaders: headers, customToken: customToken, tokenType: tokenType }),
               type: getActionType(defaultSuccessRequest, name)
@@ -312,7 +319,7 @@
           payload: { isFormData: isFormData, method: method, url: url, body: body, headers: headers, others: others },
           type: getActionType(defaultNewRequest, name, true)
         });
-        (0, _fetchum.request)(isFormData, method, url, body, headers, others).then(function (res) {
+        reqFetchum(isFormData, method, url, body, headers, others).then(function (res) {
           dispatch({
             payload: { isFormData: isFormData, method: method, url: url, body: body, headers: headers, others: others, res: res },
             type: getActionType(defaultSuccessRequest, name)
@@ -337,7 +344,7 @@
           payload: { isFormData: isFormData, method: method, route: route, body: body, headers: headers, others: others },
           type: getActionType(defaultNewRequest, name, true)
         });
-        (0, _fetchum.apiRequest)(isFormData, method, route, body, headers, others).then(function (res) {
+        apiFetchum(isFormData, method, route, body, headers, others).then(function (res) {
           dispatch({
             payload: { isFormData: isFormData, method: method, route: route, body: body, headers: headers, others: others, res: res },
             type: getActionType(defaultSuccessRequest, name)
