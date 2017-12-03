@@ -1,8 +1,4 @@
-import {
-  generateRequest as genFetchum,
-  request as reqFetchum,
-  apiRequest as apiFetchum,
-} from 'fetchum';
+import fetchum from 'fetchum';
 import assign from 'lodash.assign';
 
 
@@ -27,12 +23,12 @@ const getActionType = (type, name, before = false) => type.replace(`${before ? '
  * @param  {Object} options - {method, token, route, external, form, headers}
  *
  */
-export const generateRequest = (options, name = 'FETCH') => (params, body, headers, customToken, tokenType) => dispatch => new Promise((accept, reject) => {
+export const generateRequest = (options, name = 'FETCH', fetchumOveride = fetchum) => (params, body, headers, customToken, tokenType) => dispatch => new Promise((accept, reject) => {
   dispatch({
     payload: assign({}, options, { params, body, customHeaders: headers, customToken, tokenType }),
     type: getActionType(defaultNewRequest, name, true),
   });
-  genFetchum(options)(params, body, headers, customToken, tokenType)
+  fetchumOveride.generateRequest(options)(params, body, headers, customToken, tokenType)
   .then((res) => {
     dispatch({
       payload: assign(
@@ -64,37 +60,37 @@ export const generateRequest = (options, name = 'FETCH') => (params, body, heade
  * @param  {Object} useToken
  *
  */
-export const generateCRUDRequests = (baseUrl = '', idVar = 'id', token = false, name = 'FETCH') => (
+export const generateCRUDRequests = (baseUrl = '', idVar = 'id', token = false, name = 'FETCH', fetchumOveride = fetchum) => (
   {
     fetchAll: generateRequest({
       token,
       method: 'GET',
       route: baseUrl,
-    }, `${fetchAllPre}${name}`),
+    }, `${fetchAllPre}${name}`, fetchumOveride),
     create: generateRequest({
       token,
       method: 'POST',
       route: baseUrl,
-    }, `${createPre}${name}`),
+    }, `${createPre}${name}`, fetchumOveride),
     fetchOne: generateRequest({
       token,
       method: 'GET',
       route: `${baseUrl}/:${idVar}`,
-    }, `${fetchOnePre}${name}`),
+    }, `${fetchOnePre}${name}`, fetchumOveride),
     update: generateRequest({
       token,
       method: 'PUT',
       route: `${baseUrl}/:${idVar}`,
-    }, `${updatePre}${name}`),
+    }, `${updatePre}${name}`, fetchumOveride),
     delete: generateRequest({
       token,
       method: 'DELETE',
       route: `${baseUrl}/:${idVar}`,
-    }, `${deletePre}${name}`),
+    }, `${deletePre}${name}`, fetchumOveride),
   }
 );
 
-export const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, name = 'FETCH', storeName = 'fetch') => (
+export const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, name = 'FETCH', storeName = 'fetch', fetchumOveride = fetchum) => (
   {
     getPage: (page, params, body, headers, customToken, tokenType) => (dispatch) => {
       let nextPage = page;
@@ -106,6 +102,7 @@ export const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, na
           route: baseUrl,
         },
           `${pagePre}${name}`,
+          fetchumOveride,
         )(params, { ...body, page: nextPage }, headers, customToken, tokenType));
     },
     reGetNextPage: (params, body, headers, customToken, tokenType) => (dispatch, getState) => {
@@ -119,6 +116,7 @@ export const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, na
           route: baseUrl,
         },
           `${pagePre}${name}`,
+          fetchumOveride,
         )(params, { ...body, page: nextPage }, headers, customToken, tokenType));
     },
     getNextPage: (params, body, headers, customToken, tokenType) => (dispatch, getState) => {
@@ -133,6 +131,7 @@ export const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, na
             route: baseUrl,
           },
             `${pagePre}${name}`,
+            fetchumOveride,
           )(params, { ...body, page: nextPage }, headers, customToken, tokenType));
       }
       return new Promise(accept => accept('full'));
@@ -248,12 +247,12 @@ export const generateCRUDReducer = ({
 };
 
 
-export const request = (isFormData, method, url, body, headers, others, name = 'FETCH') => dispatch => new Promise((accept, reject) => {
+export const request = (isFormData, method, url, body, headers, others, name = 'FETCH', fetchumOveride = fetchum) => dispatch => new Promise((accept, reject) => {
   dispatch({
     payload: { isFormData, method, url, body, headers, others },
     type: getActionType(defaultNewRequest, name, true),
   });
-  reqFetchum(isFormData, method, url, body, headers, others)
+  fetchumOveride.request(isFormData, method, url, body, headers, others)
   .then((res) => {
     dispatch({
       payload: { isFormData, method, url, body, headers, others, res },
@@ -270,12 +269,12 @@ export const request = (isFormData, method, url, body, headers, others, name = '
   });
 });
 
-export const apiRequest = (isFormData, method, route, body, headers, others, name = 'FETCH') => dispatch => new Promise((accept, reject) => {
+export const apiRequest = (isFormData, method, route, body, headers, others, name = 'FETCH', fetchumOveride = fetchum) => dispatch => new Promise((accept, reject) => {
   dispatch({
     payload: { isFormData, method, route, body, headers, others },
     type: getActionType(defaultNewRequest, name, true),
   });
-  apiFetchum(isFormData, method, route, body, headers, others)
+  fetchumOveride.apiRequest(isFormData, method, route, body, headers, others)
   .then((res) => {
     dispatch({
       payload: { isFormData, method, route, body, headers, others, res },
