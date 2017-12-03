@@ -1394,9 +1394,9 @@ fetch-everywhere@^1.0.5:
     node-fetch "^1.0.1"
     whatwg-fetch ">=0.10.0"
 
-fetchum@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/fetchum/-/fetchum-5.0.1.tgz#83203cbcb71957ed063b6ed2beeae570b86d9f99"
+fetchum@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/fetchum/-/fetchum-5.1.0.tgz#5c894feb8e0fffbec270481ada99b47370f5a6f5"
   dependencies:
     betterstorage "^2.0.1"
     core-decorators "^0.20.0"
