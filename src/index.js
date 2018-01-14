@@ -146,13 +146,14 @@ export const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, na
 
 export const generatePagedReducer = ({
   name = 'fetch',
+  storeKey = 'paged',
   defaultState = {},
   modifyErrorPayload = i => i,
   modifyPagedPayload = i => i,
   extendReducer = (state) => state,
 }) => {
   const _default = assign({
-    paged: { loading: false, error: null, full: false, count: 0, current: 1, last: -1, value: {} },
+    [storeKey]: { loading: false, error: null, full: false, count: 0, current: 1, last: -1, value: {} },
   }, defaultState);
   return (state = _default, { type, payload }) => {
     const withPre = pre => `${pre}${name}`;
@@ -163,15 +164,15 @@ export const generatePagedReducer = ({
     ];
     switch (type) {
       case cases[0]:
-        return { ...state, paged: { ...state.paged, loading: true, error: null } };
+        return { ...state, [storeKey]: { ...state[storeKey], loading: true, error: null } };
       case cases[1]: {
-        const pages = assign({}, state.paged.value);
+        const pages = assign({}, state[storeKey].value);
         const data = modifyPagedPayload(payload.res.data);
         pages[data.page] = data.items;
         return {
           ...state,
-          paged: {
-            ...state.paged,
+          [storeKey]: {
+            ...state[storeKey],
             loading: false,
             value: pages,
             full: data.full,
@@ -183,7 +184,7 @@ export const generatePagedReducer = ({
       case cases[2]:
         return {
           ...state,
-          paged: { ...state.paged, loading: false, error: modifyErrorPayload(payload.res) },
+          [storeKey]: { ...state[storeKey], loading: false, error: modifyErrorPayload(payload.res) },
         };
       default:
         if (typeof extendReducer !== 'undefined') {
