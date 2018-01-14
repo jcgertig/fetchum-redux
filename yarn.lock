@@ -875,9 +875,9 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-betterstorage@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/betterstorage/-/betterstorage-2.0.1.tgz#beef67df6e3fcc2f593cecc92a1f643f27ac52df"
+betterstorage@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/betterstorage/-/betterstorage-2.0.3.tgz#5a675c227b9ff8304b87dc7e8be72927e7a71412"
   dependencies:
     core-decorators "^0.20.0"
 
@@ -1394,11 +1394,11 @@ fetch-everywhere@^1.0.5:
     node-fetch "^1.0.1"
     whatwg-fetch ">=0.10.0"
 
-fetchum@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/fetchum/-/fetchum-5.1.0.tgz#5c894feb8e0fffbec270481ada99b47370f5a6f5"
+fetchum@^5.1.4:
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/fetchum/-/fetchum-5.1.4.tgz#afa72bc348631a24fa5cf9066617cb114490eb41"
   dependencies:
-    betterstorage "^2.0.1"
+    betterstorage "^2.0.3"
     core-decorators "^0.20.0"
     es6-promise "^4.1.1"
     fetch-everywhere "^1.0.5"

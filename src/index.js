@@ -82,6 +82,11 @@ export const generateCRUDRequests = (baseUrl = '', idVar = 'id', token = false, 
       method: 'PUT',
       route: `${baseUrl}/:${idVar}`,
     }, `${updatePre}${name}`, fetchumOveride),
+    patch: generateRequest({
+      token,
+      method: 'PATCH',
+      route: `${baseUrl}/:${idVar}`,
+    }, `${updatePre}${name}`, fetchumOveride),
     delete: generateRequest({
       token,
       method: 'DELETE',
@@ -139,89 +144,29 @@ export const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, na
   }
 );
 
-export const generateCRUDReducer = ({
+export const generatePagedReducer = ({
   name = 'fetch',
   defaultState = {},
-  modifyPayload = i => i,
   modifyErrorPayload = i => i,
   modifyPagedPayload = i => i,
+  extendReducer = (state) => state,
 }) => {
   const _default = assign({
     paged: { loading: false, error: null, full: false, count: 0, current: 1, last: -1, value: {} },
-    fetchAll: { loading: false, error: null, value: [] },
-    create: { loading: false, error: null, value: {} },
-    update: { loading: false, error: null, value: {} },
-    delete: { loading: false, error: null, value: {} },
-    fetchOne: { loading: false, error: null, value: {} },
   }, defaultState);
   return (state = _default, { type, payload }) => {
     const withPre = pre => `${pre}${name}`;
+    const cases = [
+      getActionType(defaultNewRequest, withPre(pagePre), true),
+      getActionType(defaultSuccessRequest, withPre(pagePre)),
+      getActionType(defaultFailureRequest, withPre(pagePre)),
+    ];
     switch (type) {
-      case getActionType(defaultNewRequest, withPre(fetchAllPre), true):
-        return { ...state, fetchAll: { ...state.fetchAll, loading: true, error: null } };
-      case getActionType(defaultSuccessRequest, withPre(fetchAllPre)):
-        return {
-          ...state,
-          fetchAll: { ...state.fetchAll, loading: false, value: modifyPayload(payload.data) },
-        };
-      case getActionType(defaultFailureRequest, withPre(fetchAllPre)):
-        return {
-          ...state,
-          fetchAll: { ...state.fetchAll, loading: false, error: modifyErrorPayload(payload) },
-        };
-      case getActionType(defaultNewRequest, withPre(fetchOnePre), true):
-        return { ...state, fetchOne: { ...state.fetchOne, loading: true, error: null } };
-      case getActionType(defaultSuccessRequest, withPre(fetchOnePre)):
-        return {
-          ...state,
-          fetchOne: { ...state.fetchOne, loading: false, value: modifyPayload(payload.data) },
-        };
-      case getActionType(defaultFailureRequest, withPre(fetchOnePre)):
-        return {
-          ...state,
-          fetchOne: { ...state.fetchOne, loading: false, error: modifyErrorPayload(payload) },
-        };
-      case getActionType(defaultNewRequest, withPre(createPre), true):
-        return { ...state, create: { ...state.create, loading: true, error: null } };
-      case getActionType(defaultSuccessRequest, withPre(createPre)):
-        return {
-          ...state,
-          create: { ...state.create, loading: false, value: modifyPayload(payload.data) },
-        };
-      case getActionType(defaultFailureRequest, withPre(createPre)):
-        return {
-          ...state,
-          create: { ...state.create, loading: false, error: modifyErrorPayload(payload) },
-        };
-      case getActionType(defaultNewRequest, withPre(updatePre), true):
-        return { ...state, update: { ...state.update, loading: true, error: null } };
-      case getActionType(defaultSuccessRequest, withPre(updatePre)):
-        return {
-          ...state,
-          update: { ...state.update, loading: false, value: modifyPayload(payload.data) },
-        };
-      case getActionType(defaultFailureRequest, withPre(updatePre)):
-        return {
-          ...state,
-          update: { ...state.update, loading: false, error: modifyErrorPayload(payload) },
-        };
-      case getActionType(defaultNewRequest, withPre(deletePre), true):
-        return { ...state, delete: { ...state.delete, loading: true, error: null } };
-      case getActionType(defaultSuccessRequest, withPre(deletePre)):
-        return {
-          ...state,
-          delete: { ...state.delete, loading: false, value: modifyPayload(payload.data) },
-        };
-      case getActionType(defaultFailureRequest, withPre(deletePre)):
-        return {
-          ...state,
-          delete: { ...state.delete, loading: false, error: modifyErrorPayload(payload) },
-        };
-      case getActionType(defaultNewRequest, withPre(pagePre), true):
+      case cases[0]:
         return { ...state, paged: { ...state.paged, loading: true, error: null } };
-      case getActionType(defaultSuccessRequest, withPre(pagePre)): {
+      case cases[1]: {
         const pages = assign({}, state.paged.value);
-        const data = modifyPagedPayload(payload.data);
+        const data = modifyPagedPayload(payload.res.data);
         pages[data.page] = data.items;
         return {
           ...state,
@@ -235,12 +180,152 @@ export const generateCRUDReducer = ({
           },
         };
       }
-      case getActionType(defaultFailureRequest, withPre(pagePre)):
+      case cases[2]:
         return {
           ...state,
-          paged: { ...state.paged, loading: false, error: modifyErrorPayload(payload) },
+          paged: { ...state.paged, loading: false, error: modifyErrorPayload(payload.res) },
         };
       default:
+        if (typeof extendReducer !== 'undefined') {
+          return extendReducer(state, { type, payload });
+        }
+        return state;
+    }
+  };
+};
+
+export const generateCRUDReducer = ({
+  name = 'fetch',
+  defaultState = {},
+  pagedReducer = false,
+  modifyPayload = i => i,
+  modifyErrorPayload = i => i,
+  modifyPagedPayload = i => i,
+  extendReducer = (state) => state,
+}) => {
+  const _default = assign(pagedReducer ? {
+    paged: { loading: false, error: null, full: false, count: 0, current: 1, last: -1, value: {} },
+  } : {},
+  {
+    fetchAll: { loading: false, error: null, value: [] },
+    create: { loading: false, error: null, value: {} },
+    update: { loading: false, error: null, value: {} },
+    delete: { loading: false, error: null, value: {} },
+    fetchOne: { loading: false, error: null, value: {} },
+  }, defaultState);
+  return (state = _default, { type, payload }) => {
+    const withPre = pre => `${pre}${name}`;
+    const cases = [
+      getActionType(defaultNewRequest, withPre(fetchAllPre), true),
+      getActionType(defaultSuccessRequest, withPre(fetchAllPre)),
+      getActionType(defaultFailureRequest, withPre(fetchAllPre)),
+      getActionType(defaultNewRequest, withPre(fetchOnePre), true),
+      getActionType(defaultSuccessRequest, withPre(fetchOnePre)),
+      getActionType(defaultFailureRequest, withPre(fetchOnePre)),
+      getActionType(defaultNewRequest, withPre(createPre), true),
+      getActionType(defaultSuccessRequest, withPre(createPre)),
+      getActionType(defaultFailureRequest, withPre(createPre)),
+      getActionType(defaultNewRequest, withPre(updatePre), true),
+      getActionType(defaultSuccessRequest, withPre(updatePre)),
+      getActionType(defaultFailureRequest, withPre(updatePre)),
+      getActionType(defaultNewRequest, withPre(deletePre), true),
+      getActionType(defaultSuccessRequest, withPre(deletePre)),
+      getActionType(defaultFailureRequest, withPre(deletePre)),
+      getActionType(defaultNewRequest, withPre(pagePre), true),
+      getActionType(defaultSuccessRequest, withPre(pagePre)),
+      getActionType(defaultFailureRequest, withPre(pagePre)),
+    ];
+    switch (type) {
+      case cases[0]:
+        return { ...state, fetchAll: { ...state.fetchAll, loading: true, error: null } };
+      case cases[1]:
+        return {
+          ...state,
+          fetchAll: { ...state.fetchAll, loading: false, value: modifyPayload(payload.res.data) },
+        };
+      case cases[2]:
+        return {
+          ...state,
+          fetchAll: { ...state.fetchAll, loading: false, error: modifyErrorPayload(payload.res) },
+        };
+      case cases[3]:
+        return { ...state, fetchOne: { ...state.fetchOne, loading: true, error: null } };
+      case cases[4]:
+        return {
+          ...state,
+          fetchOne: { ...state.fetchOne, loading: false, value: modifyPayload(payload.res.data) },
+        };
+      case cases[5]:
+        return {
+          ...state,
+          fetchOne: { ...state.fetchOne, loading: false, error: modifyErrorPayload(payload.res) },
+        };
+      case cases[6]:
+        return { ...state, create: { ...state.create, loading: true, error: null } };
+      case cases[7]:
+        return {
+          ...state,
+          create: { ...state.create, loading: false, value: modifyPayload(payload.res.data) },
+        };
+      case cases[8]:
+        return {
+          ...state,
+          create: { ...state.create, loading: false, error: modifyErrorPayload(payload.res) },
+        };
+      case cases[9]:
+        return { ...state, update: { ...state.update, loading: true, error: null } };
+      case cases[10]:
+        return {
+          ...state,
+          update: { ...state.update, loading: false, value: modifyPayload(payload.res.data) },
+        };
+      case cases[11]:
+        return {
+          ...state,
+          update: { ...state.update, loading: false, error: modifyErrorPayload(payload.res) },
+        };
+      case cases[12]:
+        return { ...state, delete: { ...state.delete, loading: true, error: null } };
+      case cases[13]:
+        return {
+          ...state,
+          delete: { ...state.delete, loading: false, value: modifyPayload(payload.res.data) },
+        };
+      case cases[14]:
+        return {
+          ...state,
+          delete: { ...state.delete, loading: false, error: modifyErrorPayload(payload.res) },
+        };
+      case cases[15]:
+        if (!pagedReducer) { return state; }
+        return { ...state, paged: { ...state.paged, loading: true, error: null } };
+      case cases[16]: {
+        if (!pagedReducer) { return state; }
+        const pages = assign({}, state.paged.value);
+        const data = modifyPagedPayload(payload.res.data);
+        pages[data.page] = data.items;
+        return {
+          ...state,
+          paged: {
+            ...state.paged,
+            loading: false,
+            value: pages,
+            full: data.full,
+            count: data.count,
+            last: data.page,
+          },
+        };
+      }
+      case cases[17]:
+        if (!pagedReducer) { return state; }
+        return {
+          ...state,
+          paged: { ...state.paged, loading: false, error: modifyErrorPayload(payload.res) },
+        };
+      default:
+        if (typeof extendReducer !== 'undefined') {
+          return extendReducer(state, { type, payload });
+        }
         return state;
     }
   };

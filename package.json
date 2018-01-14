@@ -1,6 +1,6 @@
 {
   "name": "fetchum-redux",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Redux actions for fetchum",
   "main": "lib/index.js",
   "files": [
@@ -27,7 +27,7 @@
     "react-test-renderer": "^16.2.0"
   },
   "dependencies": {
-    "fetchum": "^5.1.0",
+    "fetchum": "^5.1.4",
     "lodash.assign": "^4.2.0"
   },
   "repository": {
