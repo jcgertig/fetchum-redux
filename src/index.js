@@ -144,6 +144,8 @@ export const generatePagedCalls = (baseUrl = '', idVar = 'id', token = false, na
   }
 );
 
+const defaultPagedState = { loading: false, error: null, full: false, count: 0, current: 1, last: -1, value: {} };
+
 export const generatePagedReducer = ({
   name = 'fetch',
   storeKey = 'paged',
@@ -153,7 +155,7 @@ export const generatePagedReducer = ({
   extendReducer = (state) => state,
 }) => {
   const _default = assign({
-    [storeKey]: { loading: false, error: null, full: false, count: 0, current: 1, last: -1, value: {} },
+    [storeKey]: defaultPagedState,
   }, defaultState);
   return (state = _default, { type, payload }) => {
     const withPre = pre => `${pre}${name}`;
@@ -187,10 +189,14 @@ export const generatePagedReducer = ({
           [storeKey]: { ...state[storeKey], loading: false, error: modifyErrorPayload(payload.res) },
         };
       default:
-        if (typeof extendReducer !== 'undefined') {
-          return extendReducer(state, { type, payload });
+        const newState = { ...state };
+        if (!newState.hasOwnProperty(storeKey)) {
+          newState[storeKey] = defaultPagedState;
         }
-        return state;
+        if (typeof extendReducer !== 'undefined') {
+          return extendReducer(newState, { type, payload });
+        }
+        return newState;
     }
   };
 };
@@ -204,9 +210,7 @@ export const generateCRUDReducer = ({
   modifyPagedPayload = i => i,
   extendReducer = (state) => state,
 }) => {
-  const _default = assign(pagedReducer ? {
-    paged: { loading: false, error: null, full: false, count: 0, current: 1, last: -1, value: {} },
-  } : {},
+  const _default = assign(pagedReducer ? { paged: defaultPagedState } : {},
   {
     fetchAll: { loading: false, error: null, value: [] },
     create: { loading: false, error: null, value: {} },
